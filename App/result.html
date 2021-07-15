@@ -1,0 +1,80 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Result</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="body">
+    <section class="result_container">
+        <div class="result_heading"></div>
+        <div class="result_body">
+            <div class="score">
+                <h1 class="Score_description"></h1>
+                <div class="score_content">
+                    <span class="youScore"></span>
+                    <div>
+                        <span>Out of</span>
+                        <span class="totalScore"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- <div class="result_question">
+                <div class="question_not"><span>Q<span class="nbrQuestion">1</span> : </span>what the output the floweing code ?</div>
+                <div class="question_contenu">
+                    what is class in c#
+                    ff<br/>dddd<br/>dddd<br/>dddd<br/>dddd<br/>dddd<br/>
+                    dddd<br/>dddd
+                </div>
+                <div class="question_answer">
+                    <span>Answer : </span><span class="answer_description">answer1</span>
+                </div>
+                <img class="img" src="img/true.png" alt="">
+            </div> -->
+        </div>
+    </section>
+    
+    <script src="data/data.js"></script>
+    <script>
+        var data = JSON.parse(quiz);
+        var totalScore = document.querySelector('.totalScore'),
+            youScore = document.querySelector('.youScore'),
+            result_body = document.querySelector('.result_body'),
+            Score_description = document.querySelector('.Score_description');
+        var answerList = sessionStorage.getItem("listAnswer").split(",");
+        //totalScore.innerHTML = answerList.length/2;
+        totalScore.innerHTML = data.quiz.length;
+        var countAnswerCorrect=0;
+        CalculAnswerCorrect();
+        youScore.innerHTML=countAnswerCorrect;
+        NoteDescription();
+
+        function CalculAnswerCorrect(){
+                for(var i=0;i<answerList.length;i+=2){
+                //answerlist loop i=id and i+1=answer
+                for(var s=0;s<data.quiz.length;s++){
+                    if(data.quiz[s].id==answerList[i]){
+                        if(data.quiz[s].answer==answerList[i+1]){
+                            countAnswerCorrect+=1;
+                            result_body.insertAdjacentHTML('beforeend','<div class="result_question"><div class="question_not"><span>Q<span class="nbrQuestion">'+(s+1)+'</span> : </span>'+data.quiz[s].description+'</div><div class="question_contenu">'+data.quiz[s].question+'</div><div class="question_answer"><span>Answer : </span><span class="answer_description" style="color:green;">'+answerList[i+1]+'</span></div><img class="img" src="img/true.png" alt=""></div>');
+                        }
+                        else{
+                            result_body.insertAdjacentHTML('beforeend','<div class="result_question"><div class="question_not"><span>Q<span class="nbrQuestion">'+(s+1)+'</span> : </span>'+data.quiz[s].description+'</div><div class="question_contenu">'+data.quiz[s].question+'</div><div class="question_answer"><span>Answer : </span><span class="answer_description" style="color:red;">'+answerList[i+1]+'</span></div><img class="img" src="img/false.png" alt=""></div>');
+                        }
+                    }
+                }
+            }
+        }
+
+        function NoteDescription(){
+            if(countAnswerCorrect==data.quiz.length){
+                Score_description.innerHTML="Good";
+            }
+            else if(countAnswerCorrect<data.quiz.length){
+                Score_description.innerHTML="Faild";
+            }
+        }
+       
+    </script>
+</body>
+</html>

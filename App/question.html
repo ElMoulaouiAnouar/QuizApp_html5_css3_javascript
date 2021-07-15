@@ -1,0 +1,140 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz App</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <section class="sectionQuiz">
+        <div class="time">
+            <div id="progressbar" class="progressbar">
+            </div>
+            <span class="nbr_scond">30</span>
+        </div>
+        <div class="question">
+            <div class="question_des">
+                <span>Question</span>
+                <span class="q_index">1</span>
+                <span class="">/</span>
+                <span class="q_count">10</span>
+            </div>
+            <div class="question_not"></div>
+            <div class="question_contenu">
+               
+            </div>
+        </div>
+        <div class="answer">
+            <div>
+                <input type="checkbox" name="answer" id="ch_answer1">
+                <label for="ch_answer1" class="lbl_answer1"></label>
+            </div>
+             <div>
+                <input type="checkbox" name="answer" id="ch_answer2">
+                <label for="ch_answer2" class="lbl_answer2"></label>
+            </div>
+             <div>
+                <input type="checkbox" name="answer" id="ch_answer3">
+                <label for="ch_answer3" class="lbl_answer3"></label>
+            </div>
+             <div>
+                <input type="checkbox" name="answer" id="ch_answer4">
+                <label for="ch_answer4" class="lbl_answer4"></label>
+            </div>
+        </div>
+        <div class="next">
+            <button class="btn_next">Next</button>
+        </div>
+    </section>
+    <script src="data/data.js"></script>
+    <script>
+        //variable verfier checkbox answer well is check 
+        let verfierCheckBox=false;
+        ProgressBar();
+        VerfierCheckBox();
+        var data = JSON.parse(quiz);
+        var value_time=100;
+        var index_question_current=0;
+        var lbl_checked_answer;
+        var div_time = document.querySelector('.progressbar'),
+            nbr_scond = document.querySelector('.nbr_scond'),
+            q_index = document.querySelector('.q_index'),
+            q_count = document.querySelector('.q_count');
+        var answerList = new Array();
+            q_index.innerHTML = 1;
+            q_count.innerHTML = data.quiz.length;
+            print_question(index_question_current);
+
+            function addAnswer(id,YourAnswer){
+                var newArray = new Array();
+                newArray.push(id);
+                newArray.push(YourAnswer);
+                answerList.push(newArray);
+            }
+
+        function ProgressBar(){
+           var _time = setInterval(function(){
+               value_time=value_time-3.333;
+                div_time.style.width=value_time.toString()+"%";
+            nbr_scond.innerHTML = parseInt(nbr_scond.textContent)-1;
+            if(parseInt(nbr_scond.textContent) == 0){
+                nbr_scond.innerHTML = "30";
+                div_time.style.width = "100%";
+                value_time=100;
+                q_index.innerHTML = parseInt(q_index.textContent)+1;
+                index_question_current++;
+                print_question(index_question_current);
+            }
+            if(parseInt(q_index.textContent)==data.quiz.length+1){
+                clearInterval(_time);
+                sessionStorage.setItem("listAnswer",answerList);
+                console.log(answerList);
+                location.replace("result.html");
+            }
+            },1000);
+        }
+        
+        function VerfierCheckBox(){
+            var check_list = document.querySelectorAll('input[name="answer"]');
+            check_list.forEach(function(check_one){
+               check_one.addEventListener("change",function(){
+                  check_list.forEach(function(check_off){
+                     check_off.checked=false; 
+                  });
+                   check_one.checked=true;
+                   verfierCheckBox=true;
+                   lbl_checked_answer=document.querySelector('label[for="'+check_one.getAttribute('id')+'"]');
+                  
+               });
+            });
+        }
+        
+        
+        
+        function print_question(_index){
+            document.querySelector('.question_not').innerHTML = data.quiz[_index].description;
+            document.querySelector('.question_contenu').innerHTML = data.quiz[_index].question;
+            document.querySelector('.lbl_answer1').innerHTML = data.quiz[_index].option.option1;
+            document.querySelector('.lbl_answer2').innerHTML = data.quiz[_index].option.option2;
+            document.querySelector('.lbl_answer3').innerHTML = data.quiz[_index].option.option3;
+            document.querySelector('.lbl_answer4').innerHTML = data.quiz[_index].option.option4;
+        }
+        
+        //btn next
+        document.querySelector('.btn_next').addEventListener("click",()=>{
+            document.querySelectorAll('input[name="answer"]').forEach(function(checkbox_item){
+                   if(checkbox_item.checked){
+                    //addAnswer() method add id and answer to array 
+                    addAnswer(data.quiz[index_question_current].id,lbl_checked_answer.textContent);
+                    nbr_scond.innerHTML = "30";
+                    div_time.style.width = "100%";
+                    value_time=100;
+                    q_index.innerHTML = parseInt(q_index.textContent)+1;
+                    checkbox_item.checked=false;
+                    index_question_current++;
+                    print_question(index_question_current);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
